@@ -1,0 +1,98 @@
+{{!-- Setup the index.handlebars to have the template that Handlebars can render onto.
+
+
+Create a button in index.handlebars that will submit the user input into the database. --}}
+
+<div class="container">
+    <div class="row">
+        <div class="col text-center">
+            <img id="welcomeImg" src="assets/img/burger.gif" class="pb-3">
+            <h1>Eat-Da-Burger!</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <h3>Fresh Burger</h3>
+            {{#each burgersData}}
+            {{#unless devoured}}
+            <div class="newburger-container">
+                <button class="devourBurger" data-id={{this.id}}> <i class="fas fa-utensils"></i> Devour it!</button>
+                {{this.id}}. {{this.burger_name}} <i class="fas fa-hamburger pl-1"></i>
+            </div>
+            {{/unless}}
+            {{/each}}
+        </div>
+        <div class="col-6">
+            <h3>Devoured Burger
+                {{!-- <button class="ml-2" style="background-color: gray; box-shadow: 0 5px rgba(0, 0, 0, 0.5);
+    "><i class="fas fa-trash"></i></button> --}}
+            </h3>
+            {{#each burgersData}}
+            {{#if devoured}}
+            <div class="devouredburger-container">{{this.id}}. {{this.burger_name}}</div>
+            {{/if}}
+            {{/each}}
+        </div>
+
+    </div>
+    <div class="row mt-4">
+        <div class="col-3"></div>
+        <div class="col-6 text-center">
+            <form id="newBurger">
+                <div class="form-group">
+                    <textarea class="form-control pt-3 pl-3 pb-3" id="burgerInput" rows="1"
+                        placeholder="Enter a burger you want and click button below!"></textarea>
+                </div>
+                <div>
+                    <button type="submit">Make A New Burger!</button>
+                </div>
+                <div class="col-3"></div>
+            </form>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+
+        //==========================clickhandlers=========================
+        //devour burger button
+        $(".devourBurger").on("click", function (event) {
+            console.log("devour it clicked")
+            event.preventDefault();
+            // get the id of the burger
+            var id = $(this).data("id");
+            console.log("The click grab the id " + id)
+            //send the PUT request to trigger the mysql UPDATE query
+            $.ajax("/api/burger/" + id, {
+                type: "PUT"
+            }).then(
+                function () {
+                    console.log("devour the burge with id:  ", id);
+                    // Reload the page to get the updated list
+                    location.reload();
+                }
+            );
+        })
+
+        // submit button
+        $("#newBurger").on("submit", function (event) {
+            // console.log("making a new burger!")
+            event.preventDefault();
+            var burger_name = $("#burgerInput").val().trim()
+            var requestBody = {
+                burger_name: burger_name
+            }
+            //send the POST request to trigger the mysql INSERT query
+            $.ajax("/api/burger", {
+                type: "POST",
+                data: requestBody
+            }).then(
+                function () {
+                    console.log("a new burger was made!");
+                    // Reload the page to get the updated list
+                    location.reload();
+                }
+            );
+        })
+
+    </script>
