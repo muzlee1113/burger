@@ -6,6 +6,6 @@ USE burgers_db;
 CREATE TABLE burgers (
     id int AUTO_INCREMENT PRIMARY KEY,
     burger_name VARCHAR(255) NOT NULL,
-    devoured boolean DEFAULT FALSE
+    devoured boolean DEFAULT 0
 );
 
